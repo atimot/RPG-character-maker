@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Character Maker</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- fontawesome -->
+    <link href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" rel="stylesheet">
+    <!-- Vue.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- local CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-maker">
+        <div class="container">
+            <h4 class="text-white font-weight-bold pt-4">キャラクターINFO</h4>
+            <div class="card">
+                <div class="row g-0 justify-content-center">
+                    <div class="col-4 p-0 d-flex align-items-center">
+                        <div class="p-4">
+                            <img class="img-fluid border border-5 rounded" :src="images[pickedGender][selectedJob]">
+                        </div>
+                    </div>
+                    <div class="right col-6 p-0">
+                        <div class="p-4">
+                            <div class="chara-info border border-5 mb-4">
+                                <div class="p-3">
+                                    <table class="table table-sm table-borderless caption-top m-0">
+                                        <caption>せってい</caption>
+                                        <tr>
+                                            <th scope="row" class="col-6">なまえ</th>
+                                            <td class="col-6">{{ nameText }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">しょくぎょう</th>
+                                            <td>{{ jobs[selectedJob].name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">せいべつ</th>
+                                            <td>{{ gender[pickedGender] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">せいかく</th>
+                                            <td>{{ getNatures()[this.selectedNature] ? getNatures()[this.selectedNature].name : '' }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="chara-status border border-5">
+                                <div class="p-3">
+                                    <table class="table table-sm table-borderless caption-top m-0">
+                                        <caption>ステータス</caption>
+                                        <tr>
+                                            <th scope="row">HP</th>
+                                            <td>{{ getNatures()[this.selectedNature] ? jobs[selectedJob].status.hp * getNatures()[selectedNature].statusCorrection.hp : jobs[selectedJob].status.hp }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">ATK</th>
+                                            <td>{{ getNatures()[this.selectedNature] ? jobs[selectedJob].status.atk * getNatures()[selectedNature].statusCorrection.atk : jobs[selectedJob].status.atk }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">SPD</th>
+                                            <td>{{ getNatures()[this.selectedNature] ? jobs[selectedJob].status.spd * getNatures()[selectedNature].statusCorrection.spd : jobs[selectedJob].status.spd }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">INT</th>
+                                            <td>{{ getNatures()[this.selectedNature] ? jobs[selectedJob].status.int * getNatures()[selectedNature].statusCorrection.int : jobs[selectedJob].status.int }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">LUK</th>
+                                            <td>{{ getNatures()[this.selectedNature] ? jobs[selectedJob].status.luk * getNatures()[selectedNature].statusCorrection.luk : jobs[selectedJob].status.luk }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h4 class="text-white font-weight-bold pt-4">キャラメイク</h4>
+            <div class="py-4">
+                <form class="text-white">
+                    <div class="row mb-3">
+                        <label for="" class="col-2 col-form-label">なまえ</label>
+                        <div class="col-4">
+                            <input type="text" class="form-control" v-model="nameText">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="col-2 col-form-label">せいべつ</label>
+                        <div class="col-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="male" value="male" v-model="pickedGender">
+                                <label class="form-check-label" for="male">おとこ</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="female" value="female" v-model="pickedGender">
+                                <label class="form-check-label" for="female">おんな</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="job" class="col-2 col-form-label">しょくぎょう</label>
+                        <div class="col-4">
+                            <select id="job" class="form-select" v-model="selectedJob">
+                                <option v-for="(job, index) in jobs" v-bind:value="index">{{ job.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="nature" class="col-2 col-form-label">せいかく</label>
+                        <div class="col-4">
+                            <select id="nature" class="form-select" v-model="selectedNature">
+                                <option v-for="(nature, index) in getNatures()" v-bind:value="index">{{ nature.name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- local JS -->
+    <script src="index.js"></script>
+</body>
+
+</html>
